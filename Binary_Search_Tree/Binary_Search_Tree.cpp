@@ -3,37 +3,35 @@
 #include <string>
 #include <cmath>
 #include <time.h>
+#include <random>
 #include "BST.h"
-
-// Does not work: Remove, ToString, main
 
 int main()
 {
+	const int MAX_ORDER = pow(10, 2);
+
+	static std::random_device rd;
+	static std::default_random_engine dre(rd());
+	std::uniform_int_distribution<int> rnd(0, MAX_ORDER);
+
 	BST::BinSerTree<int>* bst = new BST::BinSerTree<int>();
 
-	bst->Push(10);
-	bst->Push(2);
-	bst->Push(15);
-	bst->Push(42);
-	bst->Push(8);
-	bst->Push(17);
-	bst->Push(10);
-	bst->Push(38);
-	bst->Push(0);
-	bst->Push(15);
+	for (int i = 0; i < MAX_ORDER; i++) {
+		int r = rnd(dre);
+		bst->Push(r);
+	}
+	std::cout << bst->ToString(3);
 
-	std::cout << bst->ToString(true);
-
-	//bst->Pop(bst->find(2));
-
-	std::cout << bst->ToString(true);
+	for (int i = 0; i < MAX_ORDER; i++) {
+		int r = rnd(dre);
+		if (bst->Pop(bst->Find(r))) std::cout << "Node: " << r << " found and removed" << std::endl;
+	}
+	std::cout << bst->ToString(3);
 
 	bst->Erase();
-
-	std::cout << bst->ToString(true);
+	std::cout << bst->ToString();
 
 	delete bst;
-
 	return 0;
 }
 
@@ -45,15 +43,10 @@ struct some_object {
 };
 
 std::string some_objects_str(some_object* so) {
-	std::string text = "(" + std::to_string(so->field_1) + ", " + so->field_2 + ")";
-	return text;
+	return "(" + std::to_string(so->field_1) + ", " + so->field_2 + ")";
 }
 
-bool some_objects_cmp1(some_object* so1, some_object* so2) {
-	return so1->field_1 == so2->field_1;
-}
-
-bool some_objects_cmp2(some_object* so1, some_object* so2) {
+bool some_objects_cmp(some_object* so1, some_object* so2) {
 	return so1->field_1 >= so2->field_1;
 }
 
