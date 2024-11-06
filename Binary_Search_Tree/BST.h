@@ -1,4 +1,5 @@
 #include <string>
+#include <cmath>
 
 namespace BST {
 
@@ -31,15 +32,15 @@ namespace BST {
 		Node<T>* root;
 
 		int HeightOf(Node<T>* node) const {
-			if (node == nullptr) {
+			if (!node) {
 				return 0;
 			}
 
 			int rightCount = 0, leftCount = 0;
-			if (node->right != nullptr) {
+			if (node->right) {
 				rightCount = HeightOf(node->right);
 			}
-			if (node->left != nullptr) {
+			if (node->left) {
 				leftCount = HeightOf(node->left);
 			}
 
@@ -47,12 +48,12 @@ namespace BST {
 		}
 
 		bool Accommodate(Node<T>* seeker, Node<T>* current, bool (*cmp)(T, T)) {
-			if (seeker == nullptr) {
+			if (!seeker) {
 				return false;
 			}
 
-			if (current == nullptr) {
-				if (root == nullptr) {
+			if (!current) {
+				if (!root) {
 					root = seeker;
 					size++;
 					return true;
@@ -60,9 +61,9 @@ namespace BST {
 				return false;
 			}
 
-			if (cmp != nullptr) {
+			if (cmp) {
 				if (cmp(seeker->data, current->data)) {
-					if (current->right == nullptr) {
+					if (!current->right) {
 						current->right = seeker;
 						seeker->parent = current;
 					}
@@ -71,7 +72,7 @@ namespace BST {
 					}
 				}
 				else {
-					if (current->left == nullptr) {
+					if (!current->left) {
 						current->left = seeker;
 						seeker->parent = current;
 					}
@@ -82,7 +83,7 @@ namespace BST {
 			}
 			else if constexpr (std::is_arithmetic_v<T>) {
 				if (seeker->data > current->data) {
-					if (current->right == nullptr) {
+					if (!current->right) {
 						current->right = seeker;
 						seeker->parent = current;
 					}
@@ -91,7 +92,7 @@ namespace BST {
 					}
 				}
 				else {
-					if (current->left == nullptr) {
+					if (!current->left) {
 						current->left = seeker;
 						seeker->parent = current;
 					}
@@ -109,18 +110,18 @@ namespace BST {
 		}
 
 		bool Remove(Node<T>* node) {
-			if (node == nullptr) {
+			if (!node) {
 				return false;
 			}
 
 			Node<T>* temp = nullptr;
 
-			if (node->right != nullptr && node->left != nullptr) {
+			if (node->right && node->left) {
 				temp = MinRight(node->right);
 
-				if (temp != nullptr) {
+				if (temp) {
 					if (temp->parent != node) {
-						if (temp->right != nullptr) {
+						if (temp->right) {
 							temp->right->parent = temp->parent;
 						}
 						temp->parent->left = temp->right;
@@ -135,12 +136,12 @@ namespace BST {
 					return false;
 				}
 			}
-			else if (node->right != nullptr) {
+			else if (node->right) {
 				temp = MaxLeft(node->right);
 
-				if (temp != nullptr) {
+				if (temp) {
 					if (temp->parent != node) {
-						if (temp->right != nullptr) {
+						if (temp->right) {
 							temp->right->parent = temp->parent;
 						}
 						temp->parent->left = temp->right;
@@ -152,12 +153,12 @@ namespace BST {
 					return false;
 				}
 			}
-			else if (node->left != nullptr) {
+			else if (node->left) {
 				temp = MaxRight(node->left);
 
-				if (temp != nullptr) {
+				if (temp) {
 					if (temp->parent != node) {
-						if (temp->left != nullptr) {
+						if (temp->left) {
 							temp->left->parent = temp->parent;
 						}
 						temp->parent->right = temp->left;
@@ -170,7 +171,7 @@ namespace BST {
 				}
 			}
 
-			if (node->parent != nullptr) {
+			if (node->parent) {
 				if (node->parent->right == node) {
 					node->parent->right = temp;
 				}
@@ -182,7 +183,7 @@ namespace BST {
 				root = temp;
 			}
 
-			if (temp != nullptr) {
+			if (temp) {
 				temp->parent = node->parent;
 			}
 
@@ -193,18 +194,18 @@ namespace BST {
 		}
 
 		bool RemoveAllUnder(Node<T>* node) {
-			if (node == nullptr) {
+			if (!node) {
 				return false;
 			}
 
-			if (node->left != nullptr) {
+			if (node->left) {
 				RemoveAllUnder(node->left);
 			}
-			if (node->right != nullptr) {
+			if (node->right) {
 				RemoveAllUnder(node->right);
 			}
 
-			if (node->parent != nullptr) {
+			if (node->parent) {
 				if (node->parent->right == node) {
 					node->parent->right = nullptr;
 				}
@@ -222,25 +223,33 @@ namespace BST {
 			return true;
 		}
 
-		Node<T>* SearchFor(T data, Node<T>* node, bool (*cmp)(T, T)) const {
-			if (node == nullptr || node->data == data) {
-				return node;
+		Node<T>* SearchFor(T data, Node<T>* node, bool (*cmp1)(T, T), bool (*cmp2)(T, T)) const {
+			if (!node) {
+				return nullptr;
 			}
 
-			if (cmp != nullptr) {
-				if (cmp(data, node->data)) {
-					return SearchFor(data, node->right, cmp);
+			if (cmp2) {
+				if (cmp2(data, node->data)) {
+					return node;
+				}
+
+				if (cmp1(data, node->data)) {
+					return SearchFor(data, node->right, cmp1, cmp2);
 				}
 				else {
-					return SearchFor(data, node->left, cmp);
+					return SearchFor(data, node->left, cmp1, cmp2);
 				}
 			}
 			else if constexpr (std::is_arithmetic_v<T>) {
+				if (data == node->data) {
+					return node;
+				}
+
 				if (data > node->data) {
-					return SearchFor(data, node->right, cmp);
+					return SearchFor(data, node->right, cmp1, cmp2);
 				}
 				else {
-					return SearchFor(data, node->left, cmp);
+					return SearchFor(data, node->left, cmp1, cmp2);
 				}
 			}
 			else {
@@ -249,11 +258,7 @@ namespace BST {
 		}
 
 		Node<T>* MaxRight(Node<T>* node) const {
-			if (node == nullptr) {
-				return nullptr;
-			}
-
-			if (node->right == nullptr) {
+			if (!node || !node->right) {
 				return node;
 			}
 			else {
@@ -262,11 +267,7 @@ namespace BST {
 		}
 
 		Node<T>* MaxLeft(Node<T>* node) const {
-			if (node == nullptr) {
-				return nullptr;
-			}
-
-			if (node->left == nullptr) {
+			if (!node || !node->left) {
 				return node;
 			}
 			else {
@@ -275,11 +276,7 @@ namespace BST {
 		}
 
 		Node<T>* MinRight(Node<T>* node) const {
-			if (node == nullptr) {
-				return nullptr;
-			}
-
-			if (node->left == nullptr) {
+			if (!node || !node->left) {
 				return node;
 			}
 			else {
@@ -288,11 +285,7 @@ namespace BST {
 		}
 
 		Node<T>* MinLeft(Node<T>* node) const {
-			if (node == nullptr) {
-				return nullptr;
-			}
-
-			if (node->right == nullptr) {
+			if (!node || !node->right) {
 				return node;
 			}
 			else {
@@ -301,7 +294,7 @@ namespace BST {
 		}
 
 		std::string PreorderTraversal(Node<T>* node) const {
-			if (node == nullptr) {
+			if (!node) {
 				return "";
 			}
 
@@ -309,10 +302,10 @@ namespace BST {
 			text += std::to_string(int(node->index));
 			text += " ]\n";
 
-			if (node->left != nullptr) {
+			if (node->left) {
 				text += PreorderTraversal(node->left);
 			}
-			if (node->right != nullptr) {
+			if (node->right) {
 				text += PreorderTraversal(node->right);
 			}
 
@@ -320,12 +313,12 @@ namespace BST {
 		}
 
 		std::string InorderTraversal(Node<T>* node) const {
-			if (node == nullptr) {
+			if (!node) {
 				return "";
 			}
 
 			std::string text = "";
-			if (node->left != nullptr) {
+			if (node->left) {
 				text += InorderTraversal(node->left);
 			}
 
@@ -333,7 +326,7 @@ namespace BST {
 			text += std::to_string(int(node->index));
 			text += " ]\n";
 
-			if (node->right != nullptr) {
+			if (node->right) {
 				text += InorderTraversal(node->right);
 			}
 
@@ -341,7 +334,7 @@ namespace BST {
 		}
 
 		std::string CollectStrings(Node<T>* node, unsigned int limit, std::string(*str)(T)) const {
-			if (node == nullptr || limit == 0) {
+			if (!node || limit == 0) {
 				return "";
 			}
 
@@ -349,7 +342,7 @@ namespace BST {
 			text += std::to_string(int(node->index));
 
 			text += " | Data: ";
-			if (str != nullptr) {
+			if (str) {
 				text += str(node->data);
 			}
 			else if constexpr (std::is_arithmetic_v<T>) {
@@ -360,7 +353,7 @@ namespace BST {
 			}
 
 			text += " | Parent: *";
-			if (node->parent != nullptr) {
+			if (node->parent) {
 				text += std::to_string(int(node->parent->index));
 			}
 			else {
@@ -368,7 +361,7 @@ namespace BST {
 			}
 
 			text += " | Left: *";
-			if (node->left != nullptr) {
+			if (node->left) {
 				text += std::to_string(int(node->left->index));
 			}
 			else {
@@ -376,19 +369,18 @@ namespace BST {
 			}
 
 			text += " | Right: *";
-			if (node->right != nullptr) {
+			if (node->right) {
 				text += std::to_string(int(node->right->index));
 			}
 			else {
 				text += "NL";
 			}
-
 			text += " ]\n";
 
-			if (node->left != nullptr) {
+			if (node->left) {
 				text += CollectStrings(node->left, limit - 1, str);
 			}
-			if (node->right != nullptr) {
+			if (node->right) {
 				text += CollectStrings(node->right, limit - 1, str);
 			}
 
@@ -424,10 +416,9 @@ namespace BST {
 			if (Accommodate(node, root, cmp)) {
 				return true;
 			}
-			else {
-				delete node;
-				return false;
-			}
+
+			delete node;
+			return false;
 		}
 
 		bool Pop(Node<T>* node) {
@@ -435,11 +426,16 @@ namespace BST {
 		}
 
 		bool Erase() {
-			return RemoveAllUnder(root);
+			if (RemoveAllUnder(root)) {
+				next_index = 0;
+				return true;
+			}
+			
+			return false;
 		}
 
-		Node<T>* Find(T data, bool (*cmp)(T, T) = nullptr) const {
-			return SearchFor(data, root, cmp);
+		Node<T>* Find(T data, bool (*cmp1)(T, T) = nullptr, bool (*cmp2)(T, T) = nullptr) const {
+			return SearchFor(data, root, cmp1, cmp2);
 		}
 
 		std::string Preorder() const {
@@ -463,18 +459,21 @@ namespace BST {
 		}
 
 		std::string ToString(unsigned int limit = 0, std::string(*str)(T) = nullptr) const {
+			std::string text = "Binary Search Tree:\n";
+			text += "size: " + std::to_string(int(size)) + "\n";
+			text += "height: " + std::to_string(int(HeightOf(root))) + "\n";
+			text += "log2size: " + std::to_string(log2(size)) + "\n";
+			text += "size to height ratio: " + std::to_string(double(size) / HeightOf(root)) + "\n";
+			text += "height to log2size ratio: " + std::to_string(double(HeightOf(root)) / log2(size)) + "\n";
+			text += "{\n";
+
 			if (limit == 0) {
 				limit = size;
 			}
 
-			std::string text = "Binary Search Tree:\n";
-			text += "size: " + std::to_string(int(size)) + "\n";
-			text += "height: " + std::to_string(int(HeightOf(root))) + "\n";
-			text += "{\n";
-
 			text += CollectStrings(root, limit, str);
 
-			if (limit != 0) {
+			if (limit < size) {
 				text += "[...]\n";
 			}
 
