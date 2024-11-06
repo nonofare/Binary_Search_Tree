@@ -116,35 +116,58 @@ namespace BST {
 			Node<T>* temp = nullptr;
 
 			if (node->right != nullptr && node->left != nullptr) {
-				temp = MaxRight(node->left);
+				temp = MinRight(node->right);
 
 				if (temp != nullptr) {
-					if (temp->left != nullptr) {
-						temp = MaxLeft(temp->left);
+					if (temp->parent != node) {
+						if (temp->right != nullptr) {
+							temp->right->parent = temp->parent;
+						}
+						temp->parent->left = temp->right;
+						temp->right = node->right;
+						node->right->parent = temp;
 					}
 
-					node->right->parent = temp;
-					temp->right = node->right;
+					temp->left = node->left;
+					node->left->parent = temp;
+				}
+				else {
+					return false;
 				}
 			}
 			else if (node->right != nullptr) {
 				temp = MaxLeft(node->right);
 
 				if (temp != nullptr) {
-					node->right->parent = temp;
-					temp->right = node->right;
+					if (temp->parent != node) {
+						if (temp->right != nullptr) {
+							temp->right->parent = temp->parent;
+						}
+						temp->parent->left = temp->right;
+						temp->right = node->right;
+						node->right->parent = temp;
+					}
+				}
+				else {
+					return false;
 				}
 			}
 			else if (node->left != nullptr) {
 				temp = MaxRight(node->left);
 
 				if (temp != nullptr) {
-					node->left->parent = temp;
-					temp->left = node->left;
+					if (temp->parent != node) {
+						if (temp->left != nullptr) {
+							temp->left->parent = temp->parent;
+						}
+						temp->parent->right = temp->left;
+						temp->left = node->left;
+						node->left->parent = temp;
+					}
 				}
-			}
-			else {
-				return false;
+				else {
+					return false;
+				}
 			}
 
 			if (node->parent != nullptr) {
@@ -154,12 +177,13 @@ namespace BST {
 				else {
 					node->parent->left = temp;
 				}
-				if (temp != nullptr) {
-					temp->parent = node->parent;
-				}
 			}
 			else {
 				root = temp;
+			}
+
+			if (temp != nullptr) {
+				temp->parent = node->parent;
 			}
 
 			delete node;
@@ -247,6 +271,32 @@ namespace BST {
 			}
 			else {
 				return MaxLeft(node->left);
+			}
+		}
+
+		Node<T>* MinRight(Node<T>* node) const {
+			if (node == nullptr) {
+				return nullptr;
+			}
+
+			if (node->left == nullptr) {
+				return node;
+			}
+			else {
+				return MinRight(node->left);
+			}
+		}
+
+		Node<T>* MinLeft(Node<T>* node) const {
+			if (node == nullptr) {
+				return nullptr;
+			}
+
+			if (node->right == nullptr) {
+				return node;
+			}
+			else {
+				return MinLeft(node->right);
 			}
 		}
 
