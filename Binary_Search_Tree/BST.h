@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <cmath>
 
@@ -6,16 +7,12 @@ namespace BST {
 	template <typename T>
 	class BinSerTree {
 
-		template <typename T>
-		class Node {
-			friend BinSerTree;
-
+		struct Node {
 			T data;
 			size_t index;
-
-			Node<T>* parent;
-			Node<T>* left;
-			Node<T>* right;
+			Node* parent;
+			Node* left;
+			Node* right;
 
 			Node(T inData, size_t inIndex) {
 				data = inData;
@@ -24,14 +21,17 @@ namespace BST {
 				left = nullptr;
 				right = nullptr;
 			}
+
+			~Node() {
+
+			}
 		};
 
 		size_t size;
 		size_t next_index;
+		Node* root;
 
-		Node<T>* root;
-
-		int HeightOf(Node<T>* node) const {
+		int HeightOf(Node* node) const {
 			if (!node) {
 				return 0;
 			}
@@ -47,7 +47,7 @@ namespace BST {
 			return ((leftCount > rightCount) ? leftCount : rightCount) + 1;
 		}
 
-		bool Accommodate(Node<T>* seeker, Node<T>* current, bool (*cmp)(T, T)) {
+		bool Accommodate(Node* seeker, Node* current, bool (*cmp)(T, T)) {
 			if (!seeker) {
 				return false;
 			}
@@ -109,12 +109,12 @@ namespace BST {
 			return true;
 		}
 
-		bool Remove(Node<T>* node) {
+		bool Remove(Node* node) {
 			if (!node) {
 				return false;
 			}
 
-			Node<T>* temp = nullptr;
+			Node* temp = nullptr;
 
 			if (node->right && node->left) {
 				temp = MinRight(node->right);
@@ -193,7 +193,7 @@ namespace BST {
 			return true;
 		}
 
-		bool RemoveAllUnder(Node<T>* node) {
+		bool RemoveAllUnder(Node* node) {
 			if (!node) {
 				return false;
 			}
@@ -223,7 +223,7 @@ namespace BST {
 			return true;
 		}
 
-		Node<T>* SearchFor(T data, Node<T>* node, bool (*cmp1)(T, T), bool (*cmp2)(T, T)) const {
+		Node* SearchFor(T data, Node* node, bool (*cmp1)(T, T), bool (*cmp2)(T, T)) const {
 			if (!node) {
 				return nullptr;
 			}
@@ -257,7 +257,7 @@ namespace BST {
 			}
 		}
 
-		Node<T>* MaxRight(Node<T>* node) const {
+		Node* MaxRight(Node* node) const {
 			if (!node || !node->right) {
 				return node;
 			}
@@ -266,7 +266,7 @@ namespace BST {
 			}
 		}
 
-		Node<T>* MaxLeft(Node<T>* node) const {
+		Node* MaxLeft(Node* node) const {
 			if (!node || !node->left) {
 				return node;
 			}
@@ -275,7 +275,7 @@ namespace BST {
 			}
 		}
 
-		Node<T>* MinRight(Node<T>* node) const {
+		Node* MinRight(Node* node) const {
 			if (!node || !node->left) {
 				return node;
 			}
@@ -284,7 +284,7 @@ namespace BST {
 			}
 		}
 
-		Node<T>* MinLeft(Node<T>* node) const {
+		Node* MinLeft(Node* node) const {
 			if (!node || !node->right) {
 				return node;
 			}
@@ -293,7 +293,7 @@ namespace BST {
 			}
 		}
 
-		std::string PreorderTraversal(Node<T>* node) const {
+		std::string PreorderTraversal(Node* node) const {
 			if (!node) {
 				return "";
 			}
@@ -312,7 +312,7 @@ namespace BST {
 			return text;
 		}
 
-		std::string InorderTraversal(Node<T>* node) const {
+		std::string InorderTraversal(Node* node) const {
 			if (!node) {
 				return "";
 			}
@@ -333,7 +333,7 @@ namespace BST {
 			return text;
 		}
 
-		std::string CollectStrings(Node<T>* node, unsigned int limit, std::string(*str)(T)) const {
+		std::string CollectStrings(Node* node, unsigned int limit, std::string(*str)(T)) const {
 			if (!node || limit == 0) {
 				return "";
 			}
@@ -411,7 +411,7 @@ namespace BST {
 		}
 
 		bool Push(T data, bool (*cmp)(T, T) = nullptr) {
-			Node<T>* node = new Node<T>(data, next_index++);
+			Node* node = new Node(data, next_index++);
 
 			if (Accommodate(node, root, cmp)) {
 				return true;
@@ -421,7 +421,7 @@ namespace BST {
 			return false;
 		}
 
-		bool Pop(Node<T>* node) {
+		bool Pop(Node* node) {
 			return Remove(node);
 		}
 
@@ -434,7 +434,7 @@ namespace BST {
 			return false;
 		}
 
-		Node<T>* Find(T data, bool (*cmp1)(T, T) = nullptr, bool (*cmp2)(T, T) = nullptr) const {
+		Node* Find(T data, bool (*cmp1)(T, T) = nullptr, bool (*cmp2)(T, T) = nullptr) const {
 			return SearchFor(data, root, cmp1, cmp2);
 		}
 
