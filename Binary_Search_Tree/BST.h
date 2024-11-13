@@ -5,7 +5,7 @@
 namespace BST {
 
 	template <typename T>
-	class BinSerTree {
+	class BinSearTree {
 
 		struct Node {
 			T data;
@@ -388,13 +388,13 @@ namespace BST {
 		}
 
 	public:
-		BinSerTree() {
+		BinSearTree() {
 			size = 0;
 			next_index = 0;
 			root = nullptr;
 		}
 
-		~BinSerTree() {
+		~BinSearTree() {
 			RemoveAllUnder(root);
 		}
 

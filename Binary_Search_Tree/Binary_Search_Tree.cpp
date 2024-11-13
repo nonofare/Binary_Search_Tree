@@ -31,10 +31,10 @@ int main() {
 	
 	static std::random_device rd;
 	static std::default_random_engine dre(rd());
-	std::uniform_int_distribution<int> rnd_num(0, MAX_ORDER * 1000);
+	std::uniform_int_distribution<int> rnd_num(0, MAX_ORDER * 10000);
 	std::uniform_int_distribution<int> rnd_let(0, LETTES_SIZE - 1);
 
-	BST::BinSerTree<some_object*>* bst = new BST::BinSerTree<some_object*>();
+	BST::BinSearTree<some_object*>* bst = new BST::BinSearTree<some_object*>();
 
 	for (int i = 1; i <= MAX_ORDER; i++) {
 		int n = pow(10, i);
