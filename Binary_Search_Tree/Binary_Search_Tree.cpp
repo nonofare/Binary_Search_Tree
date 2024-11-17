@@ -59,7 +59,7 @@ int main() {
 			some_object* so = new some_object();
 			so->field_1 = rnd_num(dre);
 			so->field_2 = LETTERS[rnd_let(dre)];
-			if (bst->Pop(bst->Find(so, some_objects_cmp1, some_objects_cmp2))) hits++;
+			if (bst->Find(so, some_objects_cmp1, some_objects_cmp2)) hits++;
 			delete so;
 		}
 		t2 = clock();

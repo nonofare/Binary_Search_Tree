@@ -47,14 +47,14 @@ namespace BST {
 			return ((leftCount > rightCount) ? leftCount : rightCount) + 1;
 		}
 
-		bool Accommodate(Node* seeker, Node* current, bool (*cmp)(T, T)) {
-			if (!seeker) {
+		bool Insert(Node* node, Node* current, bool (*cmp)(T, T)) {
+			if (!node) {
 				return false;
 			}
 
 			if (!current) {
 				if (!root) {
-					root = seeker;
+					root = node;
 					size++;
 					return true;
 				}
@@ -62,42 +62,42 @@ namespace BST {
 			}
 
 			if (cmp) {
-				if (cmp(seeker->data, current->data)) {
+				if (cmp(node->data, current->data)) {
 					if (!current->right) {
-						current->right = seeker;
-						seeker->parent = current;
+						current->right = node;
+						node->parent = current;
 					}
 					else {
-						return Accommodate(seeker, current->right, cmp);
+						return Insert(node, current->right, cmp);
 					}
 				}
 				else {
 					if (!current->left) {
-						current->left = seeker;
-						seeker->parent = current;
+						current->left = node;
+						node->parent = current;
 					}
 					else {
-						return Accommodate(seeker, current->left, cmp);
+						return Insert(node, current->left, cmp);
 					}
 				}
 			}
 			else if constexpr (std::is_arithmetic_v<T>) {
-				if (seeker->data > current->data) {
+				if (node->data > current->data) {
 					if (!current->right) {
-						current->right = seeker;
-						seeker->parent = current;
+						current->right = node;
+						node->parent = current;
 					}
 					else {
-						return Accommodate(seeker, current->right, cmp);
+						return Insert(node, current->right, cmp);
 					}
 				}
 				else {
 					if (!current->left) {
-						current->left = seeker;
-						seeker->parent = current;
+						current->left = node;
+						node->parent = current;
 					}
 					else {
-						return Accommodate(seeker, current->left, cmp);
+						return Insert(node, current->left, cmp);
 					}
 				}
 			}
@@ -172,11 +172,11 @@ namespace BST {
 			}
 
 			if (node->parent) {
-				if (node->parent->right == node) {
-					node->parent->right = temp;
+				if (node->parent->left == node) {
+					node->parent->left = temp;
 				}
 				else {
-					node->parent->left = temp;
+					node->parent->right = temp;
 				}
 			}
 			else {
@@ -206,11 +206,11 @@ namespace BST {
 			}
 
 			if (node->parent) {
-				if (node->parent->right == node) {
-					node->parent->right = nullptr;
+				if (node->parent->left == node) {
+					node->parent->left = nullptr;
 				}
 				else {
-					node->parent->left = nullptr;
+					node->parent->right = nullptr;
 				}
 			}
 			else {
@@ -413,7 +413,7 @@ namespace BST {
 		bool Push(T data, bool (*cmp)(T, T) = nullptr) {
 			Node* node = new Node(data, next_index++);
 
-			if (Accommodate(node, root, cmp)) {
+			if (Insert(node, root, cmp)) {
 				return true;
 			}
 
