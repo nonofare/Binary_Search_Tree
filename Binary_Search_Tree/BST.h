@@ -293,44 +293,32 @@ namespace BST {
 			}
 		}
 
-		std::string PreorderTraversal(Node* node) const {
+		void PreorderTraversal(Node* node, std::vector<Node*>& result) const {
 			if (!node) {
-				return "";
+				return;
 			}
 
-			std::string text = "[ Index: ";
-			text += std::to_string(int(node->index));
-			text += " ]\n";
-
+			result.push_back(node);
 			if (node->left) {
-				text += PreorderTraversal(node->left);
+				PreorderTraversal(node->left, result);
 			}
 			if (node->right) {
-				text += PreorderTraversal(node->right);
+				PreorderTraversal(node->right, result);
 			}
-
-			return text;
 		}
 
-		std::string InorderTraversal(Node* node) const {
+		void InorderTraversal(Node* node, std::vector<Node*>& result) const {
 			if (!node) {
-				return "";
+				return;
 			}
 
-			std::string text = "";
 			if (node->left) {
-				text += InorderTraversal(node->left);
+				InorderTraversal(node->left, result);
 			}
-
-			text += "[ Index: ";
-			text += std::to_string(int(node->index));
-			text += " ]\n";
-
+			result.push_back(node);
 			if (node->right) {
-				text += InorderTraversal(node->right);
+				InorderTraversal(node->right, result);
 			}
-
-			return text;
 		}
 
 		std::string CollectStrings(Node* node, unsigned int limit, std::string(*str)(T)) const {
@@ -438,24 +426,20 @@ namespace BST {
 			return SearchFor(data, root, cmp1, cmp2);
 		}
 
-		std::string Preorder() const {
-			std::string text = "Preorder:\n";
+		std::vector<Node*> PreorderVector() const {
+			std::vector<Node*> nodes;
 
-			text += "{\n";
-			text += PreorderTraversal(root);
-			text += "}\n";
+			PreorderTraversal(root, nodes);
 
-			return text;
+			return nodes;
 		}
 
-		std::string Inorder() const {
-			std::string text = "Inorder:\n";
+		std::vector<Node*> InorderVector() const {
+			std::vector<Node*> nodes;
 
-			text += "{\n";
-			text += InorderTraversal(root);
-			text += "}\n";
+			InorderTraversal(root, nodes);
 
-			return text;
+			return nodes;
 		}
 
 		std::string ToString(unsigned int limit = 0, std::string(*str)(T) = nullptr) const {
