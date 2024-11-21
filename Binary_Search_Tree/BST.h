@@ -14,9 +14,9 @@ namespace BST {
 			Node* left;
 			Node* right;
 
-			Node(T inData, size_t inIndex) {
-				data = inData;
-				index = inIndex;
+			Node(T in_data, size_t in_index) {
+				data = in_data;
+				index = in_index;
 				parent = nullptr;
 				left = nullptr;
 				right = nullptr;
